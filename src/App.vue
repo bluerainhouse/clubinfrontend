@@ -5,8 +5,11 @@
       <li v-if="currentUser" class="nav-item">
         <router-link to="/record" class="nav-link">量測紀錄</router-link>
       </li>
-      <li v-if="!currentUser" class="nav-item">
+      <li class="nav-item">
         <router-link to="/calendar" class="nav-link"> 日曆 </router-link>
+      </li>
+      <li class="nav-item">
+        <router-link to="/club" class="nav-link"> 社團 </router-link>
       </li>
       <li v-if="currentUser" class="nav-item">
         <router-link to="/graph" class="nav-link"> 圖表 </router-link>
