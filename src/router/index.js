@@ -6,6 +6,8 @@ import RecordView from "@/views/RecordView.vue";
 import RecordDetailView from "@/views/RecordDetailView.vue";
 import LoginPage from "@/components/LoginPage.vue";
 import RegisterPage from "@/components/RegisterPage.vue";
+import FullCalendar from "@/components/FullCalendar.vue";
+import ClubHome from "@/views/ClubHome.vue";
 // lazy-loaded
 const ProfilePage = () => import("@/components/ProfilePage.vue");
 
@@ -14,6 +16,16 @@ const routes = [
     path: "/",
     name: "home",
     component: HomeView,
+  },
+  {
+    path: "/club",
+    name: "club",
+    component: ClubHome,
+  },
+  {
+    path: "/calendar",
+    name: "calendar",
+    component: FullCalendar,
   },
   {
     path: "/graph-example",

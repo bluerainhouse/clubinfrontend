@@ -1,14 +1,12 @@
 <template>
   <nav class="navbar navbar-expand navbar-dark bg-dark">
-    <a href="/" class="navbar-brand">進階血壓計量測分析服務</a>
+    <a href="/" class="navbar-brand">社團資訊平台</a>
     <div class="navbar-nav mr-auto">
       <li v-if="currentUser" class="nav-item">
         <router-link to="/record" class="nav-link">量測紀錄</router-link>
       </li>
       <li v-if="!currentUser" class="nav-item">
-        <router-link to="/graph-example" class="nav-link">
-          範例圖表
-        </router-link>
+        <router-link to="/calendar" class="nav-link"> 日曆 </router-link>
       </li>
       <li v-if="currentUser" class="nav-item">
         <router-link to="/graph" class="nav-link"> 圖表 </router-link>
