@@ -10,10 +10,10 @@ import FullCalendar from "@/components/FullCalendar.vue";
 import Announcement from "@/views/AnnouncementListView.vue";
 import AnnouncementDetail from "@/components/AnnouncementDetail.vue";
 import AnnouncementForm from "@/views/AnnouncementForm.vue";
-import ClubHome from "@/views/ClubHome.vue";
 import ClubList from "@/views/ClubList.vue";
 import ClubClass from "@/views/ClubClassView.vue";
 import Events from "@/views/EventView.vue";
+import ClubInfo from "@/components/ClubInfo.vue";
 // lazy-loaded
 const ProfilePage = () => import("@/components/ProfilePage.vue");
 
@@ -24,9 +24,9 @@ const routes = [
     component: HomeView,
   },
   {
-    path: "/club",
+    path: "/club/:recordId",
     name: "club",
-    component: ClubHome,
+    component: ClubInfo,
   },
   {
     path: "/clubs",

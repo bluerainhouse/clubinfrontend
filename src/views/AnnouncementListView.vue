@@ -9,6 +9,9 @@
       <button class="btn btn-primary" @click="filterAnnouncements">
         Filter
       </button>
+      <router-link to="/announcementEdit" class="btn btn-primary"
+        >Post</router-link
+      >
     </div>
 
     <!-- 公告列表 -->
@@ -27,7 +30,11 @@
         <tbody>
           <tr v-for="(announcement, index) in filteredItems" :key="index">
             <td>{{ announcement.date }}</td>
-            <td>{{ announcement.title }}</td>
+            <td>
+              <router-link to="/announcement-detail">{{
+                announcement.title
+              }}</router-link>
+            </td>
             <td>{{ announcement.clubName }}</td>
             <td v-if="!isLoggedIn" class="text-center">
               <span @click="toggleBookmark(index)" class="cursor-pointer">

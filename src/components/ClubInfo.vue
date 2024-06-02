@@ -1,113 +1,194 @@
-<!-- src/components/ClubInfo.vue -->
 <template>
   <div class="container my-5">
-    <!-- Hero Section -->
-    <div class="jumbotron text-center bg-primary text-white">
-      <img
-        src="https://via.placeholder.com/150"
-        alt="Club Logo"
-        class="rounded-circle mb-4"
-        width="120"
-      />
-      <h1 class="display-4">學生會社團</h1>
-      <p class="lead">促進學生交流與合作，共創美好校園生活。</p>
-    </div>
-
-    <!-- 社團簡介卡片 -->
-    <div class="card mb-5">
-      <div class="card-header">
-        <h2>關於我們</h2>
-      </div>
+    <div class="card mb-4">
       <div class="card-body">
+        <h1 class="card-title">{{ club.name }}</h1>
+        <p><strong>Club Class Time：</strong>{{ club.lessonTime }}</p>
+        <p><strong>Recent Event：</strong>{{ club.activityTime }}</p>
+        <p><strong>Intro：</strong>{{ club.description }}</p>
         <p>
-          歡迎來到學生會社團！我們的宗旨是通過各種活動和項目，促進學生之間的交流與合作，豐富校園生活。
-          我們歡迎所有學生加入我們的大家庭，一起創造更多美好回憶。
+          <strong>Links：</strong>
+          <a :href="club.socialLink" target="_blank">{{ club.socialLink }}</a>
         </p>
-      </div>
-    </div>
-
-    <!-- 聯繫方式卡片 -->
-    <div class="card mb-5">
-      <div class="card-header">
-        <h2>聯繫方式</h2>
-      </div>
-      <div class="card-body">
-        <ul class="list-unstyled">
-          <li><i class="bi bi-envelope"></i> Email: club@example.com</li>
-          <li><i class="bi bi-telephone"></i> 電話: 123-456-7890</li>
-          <li>
-            <i class="bi bi-facebook"></i>
-            <a
-              href="https://facebook.com/club"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Facebook</a
-            >
-          </li>
-          <li>
-            <i class="bi bi-twitter"></i>
-            <a
-              href="https://twitter.com/club"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Twitter</a
-            >
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- 常見問題解答卡片 -->
-    <div class="card mb-5">
-      <div class="card-header">
-        <h2>常見問題解答</h2>
-      </div>
-      <div class="card-body">
-        <div class="accordion" id="faqAccordion">
-          <div class="accordion-item" v-for="(faq, index) in faqs" :key="index">
-            <h2 class="accordion-header" :id="'heading' + index">
-              {{ faq.question }}
-            </h2>
-
-            <div class="accordion-body">
-              {{ faq.answer }}
-            </div>
+        <div class="my-3">
+          <strong>Photos：</strong>
+          <div class="d-flex flex-wrap">
+            <img
+              v-for="(photo, index) in club.photos"
+              :key="index"
+              :src="photo.url"
+              class="img-thumbnail m-2"
+              alt="Club photo"
+              style="
+                width: 150px;
+                height: 150px;
+                object-fit: cover;
+                cursor: pointer;
+              "
+              @click="openPreview(photo.url)"
+            />
           </div>
         </div>
+        <button class="btn btn-primary" @click="editMode = true">Edit</button>
       </div>
     </div>
+
+    <div v-if="editMode" class="card">
+      <div class="card-body">
+        <h2 class="card-title">Edit Club Info</h2>
+        <form @submit.prevent="saveChanges">
+          <div class="mb-3">
+            <label for="name" class="form-label">Club Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="name"
+              v-model="editableClub.name"
+              disabled
+            />
+          </div>
+          <div class="mb-3">
+            <label for="lessonTime" class="form-label">Club Class Time</label>
+            <input
+              type="text"
+              class="form-control"
+              id="lessonTime"
+              v-model="editableClub.lessonTime"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="activityTime" class="form-label">Recent Event</label>
+            <input
+              type="text"
+              class="form-control"
+              id="activityTime"
+              v-model="editableClub.activityTime"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Intro</label>
+            <textarea
+              class="form-control"
+              id="description"
+              v-model="editableClub.description"
+              rows="3"
+            ></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="socialLink" class="form-label">Links</label>
+            <input
+              type="url"
+              class="form-control"
+              id="socialLink"
+              v-model="editableClub.socialLink"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Photos</label>
+          </div>
+          <div
+            v-for="(photo, index) in club.photos"
+            :key="index"
+            class="d-flex align-items-center mb-2"
+          >
+            <input
+              type="text"
+              class="form-control"
+              v-model="photo.url"
+              placeholder="Enter photo URL"
+            />
+            <button @click="removePhoto(index)" class="btn btn-danger ms-2">
+              Remove
+            </button>
+          </div>
+          <div class="mb-3">
+            <button @click="addPhoto" class="btn btn-primary mt-2">
+              Add Photo
+            </button>
+          </div>
+          <div class="mb-3">
+            <button type="submit" class="btn btn-success">Save</button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              @click="editMode = false"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 圖片預覽模態框 -->
+    <b-modal v-model="showPreview" size="lg" centered>
+      <img :src="previewImage" class="img-fluid" alt="Preview" />
+    </b-modal>
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
 
-// 常見問題數據
-const faqs = ref([
-  {
-    question: "如何加入社團？",
-    answer: "你可以通過填寫申請表格並參加我們的迎新活動來加入社團。",
-  },
-  {
-    question: "會員有什麼福利？",
-    answer: "會員可以參加我們組織的各種活動，並有機會獲得獎品和證書。",
-  },
-  // 添加更多的常見問題
-]);
+const club = ref({
+  name: "音樂社",
+  lessonTime: "每週二下午 2:00 - 4:00",
+  activityTime: "每月第一個週六 5:00 - 7:00",
+  description:
+    "音樂社是一個專注於音樂學習和表演的社團，歡迎所有對音樂有興趣的同學參加。",
+  socialLink: "https://facebook.com/musicclub",
+  photos: [{ url: "/dance.jpg" }, { url: "/basketball.jpg" }],
+});
+
+const editMode = ref(false);
+const editableClub = ref({ ...club.value });
+const showPreview = ref(false);
+const previewImage = ref("");
+
+// 新增一個新的照片輸入框
+const addPhoto = () => {
+  editableClub.value.photos.push({ url: "" });
+};
+
+// 移除指定索引的照片
+const removePhoto = (index) => {
+  editableClub.value.photos.splice(index, 1);
+};
+
+const saveChanges = () => {
+  club.value = { ...editableClub.value };
+  editMode.value = false;
+};
+
+const openPreview = (url) => {
+  previewImage.value = url;
+  showPreview.value = true;
+};
 </script>
 
 <style scoped>
-.my-5 {
+.container {
   margin-top: 3rem;
   margin-bottom: 3rem;
 }
-.bg-primary {
-  background-color: #007bff !important;
+.card {
+  border: none;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
-.text-white {
-  color: #fff !important;
+.card-body {
+  padding: 2rem;
 }
-.rounded-circle {
-  border-radius: 50% !important;
+.card-title {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+.card-text {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+.img-thumbnail {
+  max-width: 100%;
+  height: auto;
 }
 </style>

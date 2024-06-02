@@ -4,40 +4,34 @@
       <div class="card-body">
         <h1 class="card-title">{{ announcement.title }}</h1>
         <p class="card-text">{{ announcement.content }}</p>
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item">
-            <strong>日期:</strong> {{ announcement.date }}
-          </li>
-          <li class="list-group-item">
-            <strong>社團名稱:</strong> {{ announcement.clubName }}
-          </li>
-          <li class="list-group-item">
-            <strong>已收藏:</strong>
-            <i
-              v-if="announcement.isBookmarked"
-              class="bi bi-star-fill text-warning"
-            ></i>
-            <i v-else class="bi bi-star text-secondary"></i>
-          </li>
-        </ul>
+        <p class="card-text"><strong>日期:</strong> {{ announcement.date }}</p>
+        <p class="card-text">
+          <strong>社團名稱:</strong> {{ announcement.clubName }}
+        </p>
+        <p v-if="notStarred" class="card-text">
+          <button class="btn btn-primary" @click="star">Star</button>
+        </p>
+        <p v-if="!notStarred" class="card-text">Starred</p>
       </div>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      announcement: {
-        title: "公告標題",
-        content: "公告內容",
-        date: "2024-06-01",
-        clubName: "社團名稱",
-        isBookmarked: false,
-      },
-    };
-  },
+<script setup>
+import { reactive, ref } from "vue";
+
+// 使用 reactive 定義 announcement
+const announcement = reactive({
+  title: "公告標題",
+  content: "公告內容",
+  date: "2024-06-01",
+  clubName: "社團名稱",
+});
+
+const notStarred = ref(true);
+
+const star = () => {
+  notStarred.value = false;
 };
 </script>
 

@@ -2,22 +2,19 @@
   <nav class="navbar navbar-expand navbar-dark bg-dark">
     <a href="/" class="navbar-brand">Club Info Platform</a>
     <div class="navbar-nav mr-auto">
-      <li v-if="currentUser" class="nav-item">
-        <router-link to="/record" class="nav-link"> Record </router-link>
-      </li>
-      <li class="nav-item">
-        <router-link to="/calendar" class="nav-link"> Calendar </router-link>
-      </li>
-      <li class="nav-item">
-        <router-link to="/clubs" class="nav-link"> Clubs </router-link>
-      </li>
       <li class="nav-item">
         <router-link to="/announcement" class="nav-link">
           Announcements
         </router-link>
       </li>
+      <li class="nav-item">
+        <router-link to="/clubs" class="nav-link"> Clubs </router-link>
+      </li>
+      <li class="nav-item">
+        <router-link to="/calendar" class="nav-link"> Calendar </router-link>
+      </li>
       <li v-if="currentUser" class="nav-item">
-        <router-link to="/graph" class="nav-link"> 圖表 </router-link>
+        <router-link to="/my" class="nav-link"> My Page </router-link>
       </li>
     </div>
 
