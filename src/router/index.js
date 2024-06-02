@@ -7,6 +7,9 @@ import RecordDetailView from "@/views/RecordDetailView.vue";
 import LoginPage from "@/components/LoginPage.vue";
 import RegisterPage from "@/components/RegisterPage.vue";
 import FullCalendar from "@/components/FullCalendar.vue";
+import Announcement from "@/views/AnnouncementListView.vue";
+import AnnouncementDetail from "@/components/AnnouncementDetail.vue";
+import AnnouncementForm from "@/views/AnnouncementForm.vue";
 import ClubHome from "@/views/ClubHome.vue";
 // lazy-loaded
 const ProfilePage = () => import("@/components/ProfilePage.vue");
@@ -26,6 +29,21 @@ const routes = [
     path: "/calendar",
     name: "calendar",
     component: FullCalendar,
+  },
+  {
+    path: "/announcement",
+    name: "announcement",
+    component: Announcement,
+  },
+  {
+    path: "/announcement-detail",
+    name: "announcement-detail",
+    component: AnnouncementDetail,
+  },
+  {
+    path: "/announcementEdit",
+    name: "announcement-form",
+    component: AnnouncementForm,
   },
   {
     path: "/graph-example",

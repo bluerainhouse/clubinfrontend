@@ -6,30 +6,25 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from "vue";
 import UserService from "../services/user.service";
 
-export default {
-  name: "HomeView",
-  data() {
-    return {
-      content: "",
-    };
-  },
-  mounted() {
-    UserService.getPublicContent().then(
-      (response) => {
-        this.content = response.data;
-      },
-      (error) => {
-        this.content =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-      }
-    );
-  },
-};
+const content = ref("");
+
+onMounted(() => {
+  UserService.getPublicContent().then(
+    (response) => {
+      content.value = response.data;
+    },
+    (error) => {
+      content.value =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+    }
+  );
+});
 </script>
