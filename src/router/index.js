@@ -11,6 +11,9 @@ import Announcement from "@/views/AnnouncementListView.vue";
 import AnnouncementDetail from "@/components/AnnouncementDetail.vue";
 import AnnouncementForm from "@/views/AnnouncementForm.vue";
 import ClubHome from "@/views/ClubHome.vue";
+import ClubList from "@/views/ClubList.vue";
+import ClubClass from "@/views/ClubClassView.vue";
+import Events from "@/views/EventView.vue";
 // lazy-loaded
 const ProfilePage = () => import("@/components/ProfilePage.vue");
 
@@ -24,6 +27,21 @@ const routes = [
     path: "/club",
     name: "club",
     component: ClubHome,
+  },
+  {
+    path: "/clubs",
+    name: "clubList",
+    component: ClubList,
+  },
+  {
+    path: "/club-class",
+    name: "clubClass",
+    component: ClubClass,
+  },
+  {
+    path: "/event",
+    name: "event",
+    component: Events,
   },
   {
     path: "/calendar",

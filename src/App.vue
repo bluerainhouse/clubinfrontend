@@ -9,7 +9,7 @@
         <router-link to="/calendar" class="nav-link"> Calendar </router-link>
       </li>
       <li class="nav-item">
-        <router-link to="/club" class="nav-link"> Clubs </router-link>
+        <router-link to="/clubs" class="nav-link"> Clubs </router-link>
       </li>
       <li class="nav-item">
         <router-link to="/announcement" class="nav-link">

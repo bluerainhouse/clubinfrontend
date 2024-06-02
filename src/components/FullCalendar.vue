@@ -42,15 +42,15 @@ export default {
             end: "2024-05-31",
             backgroundColor: "#ff0000",
             borderColor: "#ff0000",
-            url: "/club",
+            url: "/club-class",
           },
           {
             title: "toyy",
             start: "2024-05-29 09:00:00",
             end: "2024-05-31",
-            url: "/club",
+            url: "/club-class",
           },
-          { title: "event 2", date: "2024-05-31" },
+          { title: "event 2", date: "2024-05-31", url: "/event" },
         ],
       },
     };
