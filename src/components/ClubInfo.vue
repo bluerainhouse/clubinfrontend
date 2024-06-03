@@ -129,20 +129,18 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import axios from "axios";
+import authHeader from "../services/auth-header";
 
-const club = ref({
-  name: "音樂社",
-  lessonTime: "每週二下午 2:00 - 4:00",
-  activityTime: "每月第一個週六 5:00 - 7:00",
-  description:
-    "音樂社是一個專注於音樂學習和表演的社團，歡迎所有對音樂有興趣的同學參加。",
-  socialLink: "https://facebook.com/musicclub",
-  photos: [{ url: "/dance.jpg" }, { url: "/basketball.jpg" }],
-});
+const router = useRoute();
+
+let club = ref({});
+let id = ref();
 
 const editMode = ref(false);
-const editableClub = ref({ ...club.value });
+let editableClub = ref({});
 const showPreview = ref(false);
 const previewImage = ref("");
 
@@ -154,10 +152,12 @@ const addPhoto = () => {
 // 移除指定索引的照片
 const removePhoto = (index) => {
   editableClub.value.photos.splice(index, 1);
+  fetchData();
 };
 
 const saveChanges = () => {
   club.value = { ...editableClub.value };
+  postData();
   editMode.value = false;
 };
 
@@ -165,6 +165,41 @@ const openPreview = (url) => {
   previewImage.value = url;
   showPreview.value = true;
 };
+
+const fetchData = async (clubId) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:8080/api/club/detail?clubId=${clubId}`,
+      { headers: authHeader() }
+    );
+    club.value = response.data.data;
+    id.value = response.data.id;
+    editableClub.value = { ...club.value };
+  } catch (error) {
+    console.error(error);
+  }
+};
+const postData = () => {
+  axios
+    .post(
+      `http://localhost:8080/api/club/update`,
+      {
+        clubId: id.value,
+        data: club.value,
+      },
+      { headers: authHeader() }
+    )
+    .then((response) => {
+      console.log("保存成功:", response.data);
+    })
+    .catch((error) => {
+      console.error("保存失敗:", error);
+    });
+};
+onMounted(() => {
+  const clubId = router.params.clubId;
+  fetchData(clubId);
+});
 </script>
 
 <style scoped>

@@ -71,90 +71,76 @@
 }
 </style>
 
-<script>
+<script setup>
+import { ref, computed, onMounted } from "vue";
+import { useStore } from "vuex";
 import axios from "axios";
 import authHeader from "../services/auth-header";
 
-export default {
-  name: "RecordView",
-  computed: {
-    admin() {
-      if (this.user) {
-        return this.user.roles.includes("ROLE_ADMIN");
-      }
+// 定義 reactive 變數
+const store = useStore();
+const responseData = ref([]);
+const showTable = ref(false);
+const toggleAll = ref(false);
+const currentUser = computed(() => store.state.auth.user);
 
-      return false;
-    },
-  },
-  props: ["user"],
-  data() {
-    return {
-      responseData: [],
-      showTable: false,
-      toggleAll: false,
-    };
-  },
-  methods: {
-    fetchData() {
-      // 使用 Axios 發送 GET 請求
-      axios
-        .get(`http://localhost:8080/api/record/chart/${this.user.username}`, {
-          headers: authHeader(),
-        })
-        .then((response) => {
-          // 成功處理返回的數據
-          this.responseData = response.data;
-          // 用魔法打敗魔法 不能設成"[]"
-          if (response.data != 0) {
-            this.showTable = true;
-          } else {
-            this.showTable = false;
-          }
-        })
-        .catch((error) => {
-          // 處理錯誤
-          console.error(error);
-        });
-      this.toggleAll = false;
-    },
-    fetchAllData() {
-      // 使用 Axios 發送 GET 請求
-      axios
-        .get("http://localhost:8080/api/record/allchart", {
-          headers: authHeader(),
-        })
-        .then((response) => {
-          // 成功處理返回的數據
-          this.responseData = response.data;
-          // 用魔法打敗魔法 不能設成"[]"
-          if (response.data != 0) {
-            this.showTable = true;
-          } else {
-            this.showTable = false;
-          }
-          this.toggleAll = true;
-        })
-        .catch((error) => {
-          // 處理錯誤
-          console.error(error);
-        });
-    },
-    deleteItem(recordId) {
-      axios
-        .delete(`http://localhost:8080/api/record/${recordId}`, {
-          headers: authHeader(),
-        })
-        // eslint-disable-next-line no-unused-vars
-        .then((response) => {
-          this.fetchData(); // 刪除成功後刷新資料
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    },
-  },
-  mounted() {
-    this.fetchData();
-  },
+// 定義計算屬性 admin
+const admin = computed(() => {
+  if (currentUser.value) {
+    return currentUser.value.roles.includes("ROLE_ADMIN");
+  }
+  return false;
+});
+
+// 獲取數據的方法
+const fetchData = () => {
+  axios
+    .get(
+      `http://localhost:8080/api/record/chart/${currentUser.value.username}`,
+      {
+        headers: authHeader(),
+      }
+    )
+    .then((response) => {
+      responseData.value = response.data;
+      showTable.value = response.data.length > 0;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  toggleAll.value = false;
 };
+
+// 獲取所有數據的方法
+const fetchAllData = () => {
+  axios
+    .get("http://localhost:8080/api/record/allchart", {
+      headers: authHeader(),
+    })
+    .then((response) => {
+      responseData.value = response.data;
+      showTable.value = response.data.length > 0;
+      toggleAll.value = true;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
+// 刪除項目的方法
+const deleteItem = (recordId) => {
+  axios
+    .delete(`http://localhost:8080/api/record/${recordId}`, {
+      headers: authHeader(),
+    })
+    .then(() => {
+      fetchData(); // 刪除成功後刷新資料
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
+// 在組件掛載時自動調用 fetchData
+onMounted(fetchData);
 </script>

@@ -7,18 +7,6 @@
       <div class="card-body">
         <form @submit.prevent="submitForm">
           <div class="row mb-3">
-            <label for="name" class="col-sm-2 col-form-label">Full Name</label>
-            <div class="col-sm-10">
-              <input
-                type="text"
-                class="form-control"
-                id="name"
-                v-model="userInfo.name"
-                required
-              />
-            </div>
-          </div>
-          <div class="row mb-3">
             <label for="studentId" class="col-sm-2 col-form-label"
               >Student ID</label
             >
@@ -33,6 +21,31 @@
             </div>
           </div>
           <div class="row mb-3">
+            <label for="name" class="col-sm-2 col-form-label">Full Name</label>
+            <div class="col-sm-10">
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                v-model="userInfo.fullName"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <label for="email" class="col-sm-2 col-form-label">Email</label>
+            <div class="col-sm-10">
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                v-model="userInfo.email"
+                required
+              />
+            </div>
+          </div>
+          <div class="row mb-3">
             <label for="clubName" class="col-sm-2 col-form-label"
               >Club Name</label
             >
@@ -41,12 +54,12 @@
                 class="form-select"
                 aria-label="Default select example"
                 id="clubName"
-                v-model="userInfo.clubName"
+                v-model="userInfo.clubId"
                 required
               >
                 <option value="" disabled>Select a club</option>
-                <option v-for="club in clubs" :key="club" :value="club">
-                  {{ club }}
+                <option v-for="club in clubs" :key="club" :value="club.clubId">
+                  {{ club.name }}
                 </option>
               </select>
             </div>
@@ -57,29 +70,10 @@
               <textarea
                 class="form-control"
                 id="bio"
-                v-model="userInfo.bio"
+                v-model="userInfo.selfIntro"
                 rows="4"
                 required
               ></textarea>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <label for="profileImage" class="col-sm-2 col-form-label"
-              >Thumbnail</label
-            >
-            <div class="col-sm-10">
-              <input
-                type="file"
-                class="form-control"
-                id="profileImage"
-                @change="handleFileUpload"
-              />
-              <img
-                v-if="userInfo.image"
-                :src="userInfo.image"
-                class="img-fluid mt-3"
-                alt="Profile Image"
-              />
             </div>
           </div>
           <button type="submit" class="btn btn-primary">Save</button>
@@ -93,46 +87,70 @@
 import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
+import axios from "axios";
+import authHeader from "../services/auth-header";
 
 const store = useStore();
 const router = useRouter();
 const currentUser = computed(() => store.state.auth.user);
 
-const userInfo = ref({
-  name: "",
-  studentId: "",
-  clubName: "",
-  bio: "",
-  image: "",
-});
+const userInfo = ref({});
 
-const clubs = ref(["學生會", "音樂社", "環保社"]);
+const clubs = ref([
+  { clubId: 1, name: "學生會" },
+  { clubId: 2, name: "音樂社" },
+  { clubId: 3, name: "環保社" },
+]);
 
 onMounted(() => {
   if (!currentUser.value) {
     router.push("/login");
   } else {
     // 初始化用戶信息
-    userInfo.value.name = currentUser.value.name || "";
-    userInfo.value.studentId = currentUser.value.studentId || "";
-    userInfo.value.clubName = currentUser.value.clubName || "";
-    userInfo.value.bio = currentUser.value.bio || "";
-    userInfo.value.image = currentUser.value.image || "";
+    fetchData();
   }
 });
 
-const handleFileUpload = (event) => {
-  const file = event.target.files[0];
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    userInfo.value.image = e.target.result;
-  };
-  reader.readAsDataURL(file);
+const fetchData = () => {
+  axios
+    .get(
+      `http://localhost:8080/api/user/detail?userId=${currentUser.value.id}`,
+      {
+        headers: authHeader(),
+      }
+    )
+    .then((response) => {
+      userInfo.value = response.data;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
+const postData = () => {
+  axios
+    .post(
+      `http://localhost:8080/api/user/update`,
+      {
+        userId: currentUser.value.id,
+        fullName: userInfo.value.fullName,
+        clubId: userInfo.value.clubId,
+        selfIntro: userInfo.value.selfIntro,
+      },
+      { headers: authHeader() }
+    )
+    .then((response) => {
+      console.log("保存成功:", response.data);
+    })
+    .catch((error) => {
+      console.error("保存失敗:", error);
+    });
 };
 
 const submitForm = () => {
   // 更新用戶信息
   store.commit("auth/updateUser", userInfo.value);
+  postData();
   alert("用戶信息已更新");
 };
 </script>
