@@ -31,7 +31,7 @@ const routes = [
   },
   {
     path: "/clubs",
-    name: "clubList",
+    name: "clubs",
     component: ClubList,
   },
   {
@@ -41,7 +41,7 @@ const routes = [
   },
   {
     path: "/clubList",
-    name: "clubClass",
+    name: "clubList",
     component: ClubListView,
   },
   {
