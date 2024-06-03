@@ -7,27 +7,181 @@
           <strong>Club Name：</strong>{{ clubClass.name }}
         </p>
         <p class="card-text">
-          <strong>Held on：</strong>{{ clubClass.schedule }}
+          <strong>Start Date：</strong>{{ clubClass.startDate }}
+          {{ clubClass.startTime }}
+        </p>
+        <p class="card-text">
+          <strong>End date：</strong>{{ clubClass.endDate }}
+          {{ clubClass.endTime }}
         </p>
         <p class="card-text">
           <strong>Detail：</strong>{{ clubClass.description }}
         </p>
         <p class="card-text"><strong>Fee：</strong>{{ clubClass.fee }}</p>
+        <button class="btn btn-primary" @click="editMode = true">編輯</button>
+      </div>
+    </div>
+    <br />
+    <!-- 活動編輯卡片 -->
+    <div v-if="editMode" class="card">
+      <div class="card-body">
+        <h2 class="card-title">Edit Club Class</h2>
+        <form @submit.prevent="saveChanges">
+          <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input
+              type="text"
+              class="form-control"
+              id="title"
+              v-model="editableClass.title"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="name" class="form-label">Club Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="name"
+              v-model="editableClass.name"
+              disabled
+            />
+          </div>
+          <div class="mb-3">
+            <label for="date" class="form-label">Start Date</label>
+            <input
+              type="date"
+              class="form-control"
+              id="date"
+              v-model="editableClass.startDate"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="time" class="form-label">Start Time</label>
+            <input
+              type="time"
+              class="form-control"
+              id="time"
+              v-model="editableClass.startTime"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="date" class="form-label">End Date</label>
+            <input
+              type="date"
+              class="form-control"
+              id="date"
+              v-model="editableClass.endDate"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="time" class="form-label">End Time</label>
+            <input
+              type="time"
+              class="form-control"
+              id="time"
+              v-model="editableClass.endTime"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Detail</label>
+            <textarea
+              class="form-control"
+              id="description"
+              v-model="editableClass.description"
+              rows="3"
+            ></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="fee" class="form-label">Fee</label>
+            <input
+              type="text"
+              class="form-control"
+              id="fee"
+              v-model="editableClass.fee"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-success">儲存</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            @click="editMode = false"
+          >
+            取消
+          </button>
+        </form>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import axios from "axios";
+import authHeader from "../services/auth-header";
 
 const clubClass = ref({
   title: "音樂社社課",
   name: "音樂社",
-  schedule: "每週二下午 2:00 - 4:00",
-  description:
-    "音樂社是一個專注於音樂學習和表演的社團，歡迎所有對音樂有興趣的同學參加。",
+  startDate: "2024-06-04",
+  startTime: "12:00",
+  endDate: "2024-06-04",
+  endTime: "14:00",
+  description: "吃草莓pocky",
   fee: "免費參加",
+});
+
+const editMode = ref(false);
+const editableClass = ref({ ...clubClass.value });
+
+const fetchData = () => {
+  axios
+    .get(
+      `http://localhost:8080/api/user/detail?userId=${currentUser.value.id}`,
+      {
+        headers: authHeader(),
+      }
+    )
+    .then((response) => {
+      userInfo.value = response.data;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
+const postData = () => {
+  axios
+    .post(
+      `http://localhost:8080/api/user/update`,
+      {
+        userId: currentUser.value.id,
+        fullName: userInfo.value.fullName,
+        clubId: userInfo.value.clubId,
+        selfIntro: userInfo.value.selfIntro,
+      },
+      { headers: authHeader() }
+    )
+    .then((response) => {
+      console.log("保存成功:", response.data);
+    })
+    .catch((error) => {
+      console.error("保存失敗:", error);
+    });
+};
+
+const saveChanges = () => {
+  clubClass.value = { ...editableClass.value };
+  editMode.value = false;
+};
+
+onMounted(() => {
+  fetchData();
 });
 </script>
 
