@@ -14,9 +14,7 @@
           <strong>End date：</strong>{{ clubClass.endDate }}
           {{ clubClass.endTime }}
         </p>
-        <p class="card-text">
-          <strong>Detail：</strong>{{ clubClass.description }}
-        </p>
+        <p class="card-text"><strong>Detail：</strong>{{ clubClass.detail }}</p>
         <p class="card-text"><strong>Fee：</strong>{{ clubClass.fee }}</p>
         <button class="btn btn-primary" @click="editMode = true">編輯</button>
       </div>
@@ -122,48 +120,44 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import axios from "axios";
 import authHeader from "../services/auth-header";
 
-const clubClass = ref({
-  title: "音樂社社課",
-  name: "音樂社",
-  startDate: "2024-06-04",
-  startTime: "12:00",
-  endDate: "2024-06-04",
-  endTime: "14:00",
-  description: "吃草莓pocky",
-  fee: "免費參加",
-});
+const router = useRoute();
+let clubClass = ref();
+
+let id = ref();
 
 const editMode = ref(false);
-const editableClass = ref({ ...clubClass.value });
+let editableClass = ref({ ...clubClass.value });
 
-const fetchData = () => {
+const fetchData = (actId) => {
   axios
-    .get(
-      `http://localhost:8080/api/user/detail?userId=${currentUser.value.id}`,
-      {
-        headers: authHeader(),
-      }
-    )
+    .get(`http://localhost:8080/api/act/get?actId=${actId}`, {
+      headers: authHeader(),
+    })
     .then((response) => {
-      userInfo.value = response.data;
+      clubClass.value = response.data;
+      id.value = response.data.id;
     })
     .catch((error) => {
       console.error(error);
     });
 };
 
-const postData = () => {
+const putData = () => {
   axios
-    .post(
-      `http://localhost:8080/api/user/update`,
+    .put(
+      `http://localhost:8080/api/act/${id.value}`,
       {
-        userId: currentUser.value.id,
-        fullName: userInfo.value.fullName,
-        clubId: userInfo.value.clubId,
-        selfIntro: userInfo.value.selfIntro,
+        start_date: clubClass.value.startDate,
+        start_time: clubClass.value.startTime,
+        end_date: clubClass.value.endDate,
+        end_time: clubClass.value.endTime,
+        title: clubClass.value.title,
+        detail: clubClass.value.detail,
+        fee: clubClass.value.fee,
       },
       { headers: authHeader() }
     )
@@ -177,11 +171,13 @@ const postData = () => {
 
 const saveChanges = () => {
   clubClass.value = { ...editableClass.value };
+  putData();
   editMode.value = false;
 };
 
 onMounted(() => {
-  fetchData();
+  const actId = router.params.actIdId;
+  fetchData(actId);
 });
 </script>
 

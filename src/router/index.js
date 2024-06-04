@@ -35,7 +35,7 @@ const routes = [
     component: ClubList,
   },
   {
-    path: "/club-class",
+    path: "/club-class/:actId",
     name: "clubClass",
     component: ClubClass,
   },

@@ -39,12 +39,12 @@
             <select
               id="clubName"
               class="form-select"
-              v-model="announcement.clubName"
+              v-model="announcement.clubId"
               required
             >
               <option value="">請選擇社團</option>
-              <option v-for="club in clubs" :key="club" :value="club">
-                {{ club }}
+              <option v-for="club in clubs" :key="club" :value="club.id">
+                {{ club.fullName }}
               </option>
             </select>
           </div>
@@ -89,36 +89,58 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { Modal } from "bootstrap";
+import axios from "axios";
+import authHeader from "../services/auth-header";
 
-const announcement = ref({
+let announcement = ref({
   title: "",
   content: "",
   date: "",
-  clubName: "",
+  clubId: "",
 });
 
-const clubs = ref(["學生會", "音樂社", "環保社"]);
+let clubs = ref([]);
 
 const router = useRouter();
 let successModal = null;
 
-const submitForm = () => {
-  // 模擬保存公告的功能
-  console.log("保存公告:", announcement.value);
-  // 在此處添加保存至後端的邏輯，例如 API 調用
-  // axios.post('/api/announcements', announcement.value)
-  //   .then(response => {
-  //     console.log('保存成功:', response.data);
-  //   })
-  //   .catch(error => {
-  //     console.error('保存失敗:', error);
-  //   });
+const fetchData = async () => {
+  try {
+    const response = await axios.get("http://localhost:8080/api/club/all", {
+      headers: authHeader(),
+    });
+    clubs.value = response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
 
-  // 顯示成功彈窗
+const postData = () => {
+  axios
+    .post(
+      `http://localhost:8080/api/ano/`,
+      {
+        clubId: announcement.value.clubId,
+        title: announcement.value.title,
+        content: announcement.value.content,
+        date: announcement.value.date,
+      },
+      { headers: authHeader() }
+    )
+    .then((response) => {
+      console.log("保存成功:", response.data);
+    })
+    .catch((error) => {
+      console.error("保存失敗:", error);
+    });
+};
+
+const submitForm = () => {
   const modalElement = document.getElementById("successModal");
+  postData();
   successModal = new Modal(modalElement);
   successModal.show();
 };
@@ -129,6 +151,10 @@ const navigateToAnnouncements = () => {
   }
   router.push("/announcement");
 };
+
+onMounted(() => {
+  fetchData();
+});
 </script>
 
 <style scoped>
