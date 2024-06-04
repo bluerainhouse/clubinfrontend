@@ -8,21 +8,15 @@
         <p class="card-text">
           <strong>Club Name:</strong> {{ announcement.clubName }}
         </p>
-        <div v-if="currentUser">
-          <p v-if="!starred" class="card-text">
-            <button class="btn btn-primary" @click="starred = true">
-              Star
-            </button>
-          </p>
-          <p v-if="starred" class="card-text">Starred</p>
-          <br />
-          <p class="card-text">
-            <button class="btn btn-primary" @click="editMode = true">
-              Edit
-            </button>
-          </p>
+        <div class="card-text" v-if="currentUser">
+          <button v-if="!starred" class="btn btn-primary" @click="star">
+            Star
+          </button>
+          <button v-if="starred" class="btn btn-secondary" @click="unstar">
+            Unstar
+          </button>
+          <button class="btn btn-primary" @click="editMode = true">Edit</button>
         </div>
-        <br />
         <p class="card-text">
           <router-link to="/announcement" class="btn btn-secondary"
             >Back</router-link
@@ -89,12 +83,22 @@ import authHeader from "../services/auth-header";
 const router = useRoute();
 const store = useStore();
 let id = ref();
+let starId = ref();
 const editMode = ref(false);
 
 // 使用 reactive 定義 announcement
 const announcement = ref({});
 let editableAno = ref({ ...announcement.value });
-let starred = ref();
+const starred = ref(false);
+const star = () => {
+  postStar();
+  starred.value = true;
+};
+
+const unstar = () => {
+  deleteStar();
+  starred.value = false;
+};
 
 const currentUser = computed(() => store.state.auth.user);
 
@@ -106,7 +110,7 @@ const fetchData = (anoId) => {
     .then((response) => {
       announcement.value = response.data;
       editableAno.value = { ...announcement.value };
-      id.value = anoId;
+      id.value = parseInt(anoId);
     })
     .catch((error) => {
       console.error(error);
@@ -120,13 +124,14 @@ const fetchData = (anoId) => {
     )
     .then((response) => {
       if (response.data != 0) {
-        starred = true;
+        starred.value = true;
+        starId.value = parseInt(response.data.id);
       } else {
-        starred = false;
+        starred.value = false;
       }
     })
     .catch((error) => {
-      starred = false;
+      starred.value = false;
       console.error(error);
     });
 };
@@ -146,6 +151,38 @@ const putData = () => {
     })
     .catch((error) => {
       console.error("保存失敗:", error);
+    });
+};
+
+const postStar = () => {
+  axios
+    .post(
+      "http://localhost:8080/api/stars/",
+      {
+        user_id: currentUser.value.id,
+        ano_id: id.value,
+      },
+      { headers: authHeader() }
+    )
+    .then((response) => {
+      starId.value = response.data.id;
+      console.log("保存成功:", response.data);
+    })
+    .catch((error) => {
+      console.error("保存失敗:", error);
+    });
+};
+
+const deleteStar = () => {
+  axios
+    .delete(`http://localhost:8080/api/stars/${starId.value}`, {
+      headers: authHeader(),
+    })
+    .then((response) => {
+      console.log("刪除成功:", response.data);
+    })
+    .catch((error) => {
+      console.error("刪除失敗:", error);
     });
 };
 
