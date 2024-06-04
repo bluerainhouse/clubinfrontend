@@ -60,7 +60,7 @@ const routes = [
     component: Announcement,
   },
   {
-    path: "/announcement-detail",
+    path: "/announcement-detail/:anoId",
     name: "announcement-detail",
     component: AnnouncementDetail,
   },

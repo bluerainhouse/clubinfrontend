@@ -176,7 +176,7 @@ const saveChanges = () => {
 };
 
 onMounted(() => {
-  const actId = router.params.actIdId;
+  const actId = router.params.actId;
   fetchData(actId);
 });
 </script>
