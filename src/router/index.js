@@ -1,7 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
-import GraphExampleView from "@/views/GraphExampleView.vue";
-import GraphView from "@/views/GraphView.vue";
 import RecordView from "@/views/RecordView.vue";
 import RecordDetailView from "@/views/RecordDetailView.vue";
 import LoginPage from "@/components/LoginPage.vue";
@@ -12,9 +10,9 @@ import AnnouncementDetail from "@/components/AnnouncementDetail.vue";
 import AnnouncementForm from "@/views/AnnouncementForm.vue";
 import ClubList from "@/views/ClubList.vue";
 import ClubClass from "@/views/ClubClassView.vue";
-import Events from "@/views/EventView.vue";
+import Event from "@/views/EventView.vue";
 import ClubInfo from "@/components/ClubInfo.vue";
-import ClubListView from "@/views/ClubListView.vue";
+import ActivityForm from "@/views/ActivityForm.vue";
 // lazy-loaded
 const ProfilePage = () => import("@/components/ProfilePage.vue");
 
@@ -40,14 +38,9 @@ const routes = [
     component: ClubClass,
   },
   {
-    path: "/clubList",
-    name: "clubList",
-    component: ClubListView,
-  },
-  {
     path: "/event",
     name: "event",
-    component: Events,
+    component: Event,
   },
   {
     path: "/calendar",
@@ -70,14 +63,9 @@ const routes = [
     component: AnnouncementForm,
   },
   {
-    path: "/graph-example",
-    name: "graph-example",
-    component: GraphExampleView,
-  },
-  {
-    path: "/graph",
-    name: "graph",
-    component: GraphView,
+    path: "/activityEdit",
+    name: "activity-form",
+    component: ActivityForm,
   },
   {
     path: "/record",

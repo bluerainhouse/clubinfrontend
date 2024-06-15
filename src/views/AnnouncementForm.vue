@@ -2,7 +2,7 @@
   <div class="container my-5">
     <div class="card">
       <div class="card-body">
-        <h1 class="card-title">編輯公告</h1>
+        <h1 class="card-title">新增公告</h1>
         <form @submit.prevent="submitForm">
           <div class="mb-3">
             <label for="title" class="form-label">標題</label>

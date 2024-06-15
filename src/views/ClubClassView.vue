@@ -90,7 +90,7 @@
             <textarea
               class="form-control"
               id="description"
-              v-model="editableClass.description"
+              v-model="editableClass.detail"
               rows="3"
             ></textarea>
           </div>
@@ -125,12 +125,12 @@ import axios from "axios";
 import authHeader from "../services/auth-header";
 
 const router = useRoute();
-let clubClass = ref();
+let clubClass = ref({});
 
 let id = ref();
 
 const editMode = ref(false);
-let editableClass = ref({ ...clubClass.value });
+let editableClass = ref({});
 
 const fetchData = (actId) => {
   axios
@@ -140,6 +140,7 @@ const fetchData = (actId) => {
     .then((response) => {
       clubClass.value = response.data;
       id.value = response.data.id;
+      editableClass.value = { ...clubClass.value };
     })
     .catch((error) => {
       console.error(error);
