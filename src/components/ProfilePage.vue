@@ -47,7 +47,7 @@
           </div>
           <div class="row mb-3">
             <label for="clubName" class="col-sm-2 col-form-label"
-              >Club Name</label
+              >My Club</label
             >
             <div class="col-sm-10">
               <select
@@ -58,8 +58,8 @@
                 required
               >
                 <option value="" disabled>Select a club</option>
-                <option v-for="club in clubs" :key="club" :value="club.clubId">
-                  {{ club.name }}
+                <option v-for="club in clubs" :key="club" :value="club.id">
+                  {{ club.fullName }}
                 </option>
               </select>
             </div>
@@ -96,11 +96,7 @@ const currentUser = computed(() => store.state.auth.user);
 
 const userInfo = ref({});
 
-const clubs = ref([
-  { clubId: 1, name: "學生會" },
-  { clubId: 2, name: "音樂社" },
-  { clubId: 3, name: "環保社" },
-]);
+const clubs = ref();
 
 onMounted(() => {
   if (!currentUser.value) {
@@ -108,6 +104,7 @@ onMounted(() => {
   } else {
     // 初始化用戶信息
     fetchData();
+    fetchClubs();
   }
 });
 
@@ -121,6 +118,19 @@ const fetchData = () => {
     )
     .then((response) => {
       userInfo.value = response.data;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
+const fetchClubs = () => {
+  axios
+    .get("http://localhost:8080/api/club/all", {
+      headers: authHeader(),
+    })
+    .then((response) => {
+      clubs.value = response.data;
     })
     .catch((error) => {
       console.error(error);

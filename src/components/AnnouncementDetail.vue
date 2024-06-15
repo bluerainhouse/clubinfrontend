@@ -117,7 +117,7 @@ const fetchData = (anoId) => {
     });
   axios
     .get(
-      `http://localhost:8080/api/star/get?userId=${currentUser.value.id}?anoId=${anoId}`,
+      `http://localhost:8080/api/stars/search?userId=${currentUser.value.id}&anoId=${anoId}`,
       {
         headers: authHeader(),
       }

@@ -29,7 +29,15 @@
             />
           </div>
         </div>
-        <button class="btn btn-primary" @click="editMode = true">Edit</button>
+        <div class="card-text" v-if="currentUser">
+          <button v-if="!followed" class="btn btn-primary" @click="follow">
+            Follow
+          </button>
+          <button v-if="followed" class="btn btn-secondary" @click="unfollow">
+            Unfollow
+          </button>
+          <button class="btn btn-primary" @click="editMode = true">Edit</button>
+        </div>
       </div>
     </div>
 
@@ -129,21 +137,36 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
+import { useStore } from "vuex";
 import { useRoute } from "vue-router";
 import axios from "axios";
 import authHeader from "../services/auth-header";
 
 const router = useRoute();
+const store = useStore();
 
 let club = ref({});
 let id = ref();
+let followId = ref();
 
 const editMode = ref(false);
 let editableClub = ref({});
 const showPreview = ref(false);
 const previewImage = ref("");
 
+const followed = ref(false);
+const follow = () => {
+  postFollow();
+  followed.value = true;
+};
+
+const unfollow = () => {
+  deleteFollow();
+  followed.value = false;
+};
+
+const currentUser = computed(() => store.state.auth.user);
 // 新增一個新的照片輸入框
 const addPhoto = () => {
   editableClub.value.photos.push({ url: "" });
@@ -178,6 +201,25 @@ const fetchData = async (clubId) => {
   } catch (error) {
     console.error(error);
   }
+  axios
+    .get(
+      `http://localhost:8080/api/star-club/search?userId=${currentUser.value.id}&clubId=${id.value}`,
+      {
+        headers: authHeader(),
+      }
+    )
+    .then((response) => {
+      if (response.data != 0) {
+        followed.value = true;
+        followId.value = parseInt(response.data.id);
+      } else {
+        followed.value = false;
+      }
+    })
+    .catch((error) => {
+      followed.value = false;
+      console.error(error);
+    });
 };
 const postData = () => {
   axios
@@ -196,6 +238,39 @@ const postData = () => {
       console.error("保存失敗:", error);
     });
 };
+
+const postFollow = () => {
+  axios
+    .post(
+      "http://localhost:8080/api/star-club/",
+      {
+        user_id: currentUser.value.id,
+        club_id: id.value,
+      },
+      { headers: authHeader() }
+    )
+    .then((response) => {
+      followId.value = response.data.id;
+      console.log("保存成功:", response.data);
+    })
+    .catch((error) => {
+      console.error("保存失敗:", error);
+    });
+};
+
+const deleteFollow = () => {
+  axios
+    .delete(`http://localhost:8080/api/star-club/${followId.value}`, {
+      headers: authHeader(),
+    })
+    .then((response) => {
+      console.log("刪除成功:", response.data);
+    })
+    .catch((error) => {
+      console.error("刪除失敗:", error);
+    });
+};
+
 onMounted(() => {
   const clubId = router.params.clubId;
   fetchData(clubId);
