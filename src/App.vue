@@ -3,7 +3,7 @@
     <a href="/" class="navbar-brand">Club Info Platform</a>
     <div class="navbar-nav mr-auto">
       <li class="nav-item">
-        <router-link to="/announcement" class="nav-link">
+        <router-link to="/announcements" class="nav-link">
           Announcements
         </router-link>
       </li>
@@ -14,7 +14,9 @@
         <router-link to="/calendar" class="nav-link"> Calendar </router-link>
       </li>
       <li v-if="currentUser" class="nav-item">
-        <router-link to="/my" class="nav-link"> My Page </router-link>
+        <router-link to="/activities" class="nav-link">
+          Activities
+        </router-link>
       </li>
     </div>
 

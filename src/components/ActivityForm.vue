@@ -46,9 +46,9 @@
               v-model="activity.type"
               required
             >
-              <option value="">Select a club</option>
+              <option value="">Select Type</option>
               <option v-for="type in types" :key="type" :value="type.name">
-                {{ type.fullName }}
+                {{ type.name }}
               </option>
             </select>
           </div>
@@ -160,10 +160,7 @@ let activity = ref({
   type: "",
 });
 
-let types = [
-  { name: "CLUBCLASS", fullName: "Club Class" },
-  { name: "EVENT", fullName: "Event" },
-];
+let types = [{ name: "Club Class" }, { name: "Event" }];
 
 let clubs = ref([]);
 

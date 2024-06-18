@@ -1,18 +1,16 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
-import RecordView from "@/views/RecordView.vue";
-import RecordDetailView from "@/views/RecordDetailView.vue";
 import LoginPage from "@/components/LoginPage.vue";
 import RegisterPage from "@/components/RegisterPage.vue";
 import FullCalendar from "@/components/FullCalendar.vue";
-import Announcement from "@/views/AnnouncementListView.vue";
-import AnnouncementDetail from "@/components/AnnouncementDetail.vue";
-import AnnouncementForm from "@/views/AnnouncementForm.vue";
+import Announcement from "@/components/AnnouncementDetail.vue";
+import AnnouncementForm from "@/components/AnnouncementForm.vue";
+import AnnouncementList from "@/views/AnnouncementListView.vue";
+import Activity from "@/components/ActivityDetail.vue";
+import ActivityForm from "@/components/ActivityForm.vue";
+import ActivityList from "@/views/ActivityList.vue";
+import Club from "@/components/ClubInfo.vue";
 import ClubList from "@/views/ClubList.vue";
-import ClubClass from "@/views/ClubClassView.vue";
-import Event from "@/views/EventView.vue";
-import ClubInfo from "@/components/ClubInfo.vue";
-import ActivityForm from "@/views/ActivityForm.vue";
 // lazy-loaded
 const ProfilePage = () => import("@/components/ProfilePage.vue");
 
@@ -25,7 +23,7 @@ const routes = [
   {
     path: "/club/:clubId",
     name: "club",
-    component: ClubInfo,
+    component: Club,
   },
   {
     path: "/clubs",
@@ -33,49 +31,39 @@ const routes = [
     component: ClubList,
   },
   {
-    path: "/club-class/:actId",
-    name: "clubClass",
-    component: ClubClass,
+    path: "/activity/:actId",
+    name: "activity",
+    component: Activity,
   },
   {
-    path: "/event",
-    name: "event",
-    component: Event,
+    path: "/newActivity",
+    name: "newActivity",
+    component: ActivityForm,
+  },
+  {
+    path: "/activities",
+    name: "activities",
+    component: ActivityList,
+  },
+  {
+    path: "/announcement/:anoId",
+    name: "announcement",
+    component: Announcement,
+  },
+  {
+    path: "/newAnnouncement",
+    name: "newAnnouncement",
+    component: AnnouncementForm,
+  },
+  {
+    path: "/announcements",
+    name: "announcements",
+    component: AnnouncementList,
   },
   {
     path: "/calendar",
     name: "calendar",
     component: FullCalendar,
-  },
-  {
-    path: "/announcement",
-    name: "announcement",
-    component: Announcement,
-  },
-  {
-    path: "/announcement-detail/:anoId",
-    name: "announcement-detail",
-    component: AnnouncementDetail,
-  },
-  {
-    path: "/announcementEdit",
-    name: "announcement-form",
-    component: AnnouncementForm,
-  },
-  {
-    path: "/activityEdit",
-    name: "activity-form",
-    component: ActivityForm,
-  },
-  {
-    path: "/record",
-    name: "record",
-    component: RecordView,
-  },
-  {
-    path: "/record-detail/:recordId",
-    name: "record-detail",
-    component: RecordDetailView,
   },
   {
     path: "/login",

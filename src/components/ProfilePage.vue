@@ -53,7 +53,6 @@
               <select
                 class="form-select"
                 aria-label="Default select example"
-                id="clubName"
                 v-model="userInfo.clubId"
                 required
               >

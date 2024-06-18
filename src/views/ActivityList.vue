@@ -2,19 +2,15 @@
 <template>
   <div class="container my-5">
     <!-- 篩選按鈕 -->
-    <h2>Announcements</h2>
+    <h2>Activities</h2>
     <div class="d-flex justify-content-end mb-3">
       <button class="btn btn-warning" @click="fetchAllData">All</button>
-      <button class="btn btn-secondary" @click="fetchStarredData">
-        Starred
-      </button>
-      <button class="btn btn-secondary" @click="fetchFollowingData">
-        Following
+      <button class="btn btn-secondary" @click="fetchEventData">Events</button>
+      <button class="btn btn-secondary" @click="fetchClubClassData">
+        Club Classes
       </button>
 
-      <router-link to="/newAnnouncement" class="btn btn-primary"
-        >Post</router-link
-      >
+      <router-link to="/newActivity" class="btn btn-primary">Post</router-link>
     </div>
 
     <!-- 公告列表 -->
@@ -28,14 +24,14 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(announcement, index) in announcements" :key="index">
-            <td>{{ announcement.date }}</td>
+          <tr v-for="(activity, index) in activities" :key="index">
+            <td>{{ activity.type }}</td>
             <td>
-              <router-link :to="`/announcement/${announcement.id}`">
-                {{ announcement.title }}
+              <router-link :to="`/activity/${activity.id}`">
+                {{ activity.title }}
               </router-link>
             </td>
-            <td>{{ announcement.clubName }}</td>
+            <td>{{ activity.clubName }}</td>
           </tr>
         </tbody>
       </table>
@@ -44,50 +40,47 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
-import { useStore } from "vuex";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 import authHeader from "../services/auth-header";
 
 // 公告數據
-let announcements = ref([]);
-const store = useStore();
-const currentUser = computed(() => store.state.auth.user);
+let activities = ref([]);
 
 const fetchAllData = async () => {
   try {
-    const response = await axios.get("http://localhost:8080/api/ano/all", {
+    const response = await axios.get("http://localhost:8080/api/act/all", {
       headers: authHeader(),
     });
-    announcements.value = response.data;
+    activities.value = response.data;
   } catch (error) {
     console.error(error);
   }
 };
 
-const fetchStarredData = async () => {
+const fetchEventData = async () => {
   try {
     const response = await axios.get(
-      `http://localhost:8080/api/ano/search?userId=${currentUser.value.id}`,
+      "http://localhost:8080/api/act/search?type=Event",
       {
         headers: authHeader(),
       }
     );
-    announcements.value = response.data;
+    activities.value = response.data;
   } catch (error) {
     console.error(error);
   }
 };
 
-const fetchFollowingData = async () => {
+const fetchClubClassData = async () => {
   try {
     const response = await axios.get(
-      `http://localhost:8080/api/ano/starClub?userId=${currentUser.value.id}`,
+      "http://localhost:8080/api/act/search?type=Club Class",
       {
         headers: authHeader(),
       }
     );
-    announcements.value = response.data;
+    activities.value = response.data;
   } catch (error) {
     console.error(error);
   }

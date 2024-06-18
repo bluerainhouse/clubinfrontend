@@ -4,7 +4,7 @@
       <div class="card-body">
         <h1 class="card-title">{{ clubClass.title }}</h1>
         <p class="card-text">
-          <strong>Club Name：</strong>{{ clubClass.name }}
+          <strong>Club Name：</strong>{{ clubClass.clubName }}
         </p>
         <p class="card-text">
           <strong>Start Date：</strong>{{ clubClass.startDate }}
@@ -15,8 +15,9 @@
           {{ clubClass.endTime }}
         </p>
         <p class="card-text"><strong>Detail：</strong>{{ clubClass.detail }}</p>
+        <p class="card-text"><strong>Type：</strong>{{ clubClass.type }}</p>
         <p class="card-text"><strong>Fee：</strong>{{ clubClass.fee }}</p>
-        <button class="btn btn-primary" @click="editMode = true">編輯</button>
+        <button class="btn btn-primary" @click="editMode = true">Edit</button>
       </div>
     </div>
     <br />
@@ -41,7 +42,7 @@
               type="text"
               class="form-control"
               id="name"
-              v-model="editableClass.name"
+              v-model="editableClass.clubName"
               disabled
             />
           </div>
@@ -95,6 +96,16 @@
             ></textarea>
           </div>
           <div class="mb-3">
+            <label for="type" class="form-label">Type</label>
+            <input
+              type="text"
+              class="form-control"
+              id="type"
+              v-model="editableClass.type"
+              disabled
+            />
+          </div>
+          <div class="mb-3">
             <label for="fee" class="form-label">Fee</label>
             <input
               type="text"
@@ -139,7 +150,7 @@ const fetchData = (actId) => {
     })
     .then((response) => {
       clubClass.value = response.data;
-      id.value = response.data.id;
+      id.value = actId;
       editableClass.value = { ...clubClass.value };
     })
     .catch((error) => {
